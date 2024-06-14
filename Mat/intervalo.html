@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matemática Aplicada</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url("back.jpg") no-repeat center center;
+            background-size: cover;
+            height: 100vh;
+        }
+        .content-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .calculator-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        select, input[type="number"] {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: calc(100% - 22px);
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #resultado {
+            margin-top: 15px;
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .menu {
+            background-color: #333;
+            overflow: hidden;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        .menu ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+        .menu ul li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        .menu ul li a:hover, .menu ul li a.active {
+            background-color: #04AA6D;
+            color: white;
+        }
+    </style>
+    </head>
+    <body>
+        <div class="menu">
+            <ul>
+                <li><a href="intervalo.html" class="active">Estimación por Intervalo</a></li>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="puntual.html">Estimación Puntual</a></li>
+            </ul>
+        </div>
+        <div class="content-container">
+    <div class="calculator-container">
+        <h2>Calculadora de Estimación Por Intervalo</h2>
+        <form id="calculadora">
+            <input type="number" id="media" placeholder="Media Muestral" required>
+            <input type="number" id="tamanio" placeholder="Tamaño de la Muestra" required>
+            <input type="number" id="desviacion" placeholder="Desviación Estándar" required>
+            <input type="number" id="confianza" placeholder="Nivel de Confianza (90, 95, 99)" required>
+            <button type="button" onclick="calcularIntervalo()">Calcular</button>
+        </form>
+        <div class="resultado" id="resultado"></div>
+        </div>
+    <script>
+        function calcularIntervalo() {
+    const media = parseFloat(document.getElementById('media').value);
+    const tamanio = parseFloat(document.getElementById('tamanio').value);
+    const desviacion = parseFloat(document.getElementById('desviacion').value);
+    const confianza = parseFloat(document.getElementById('confianza').value) / 100;
+    const z = calcularZ(confianza);
+    const error = z * (desviacion / Math.sqrt(tamanio));
+    const intervaloInferior = media - error;
+    const intervaloSuperior = media + error;
+    document.getElementById('resultado').innerText = `Intervalo de confianza: [${intervaloInferior} - ${intervaloSuperior}]`;
+}
+
+        function calcularZ(confianza) {
+            if (confianza === 99) return 2.58;
+            if (confianza === 95) return 1.96;
+            if (confianza === 90) return 1.645;
+            return 1.96;
+        }
+    </script>
+<div class="info">
+    <p>
+        <b>Media muestral:</b> Promedio de un grupo pequeño (muestra) para estimar el promedio de toda la población. <br>
+
+        <b>Desviación estándar:</b> Mide qué tan dispersos están los datos de la media muestral. <br>
+        
+        <b>Muestra poblacional:</b> El grupo pequeño de datos elegido para la estimación. <br>
+        
+        <b>Nivel de confianza:</b> Probabilidad de que el intervalo contenga el verdadero promedio de la población.</p>
+    </div>
+</div>
+</body>
+</html>

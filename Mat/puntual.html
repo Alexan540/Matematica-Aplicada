@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matemática Aplicada</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url("back.jpg") no-repeat center center;
+            background-size: cover;
+            height: 100vh;
+        }
+        .content-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .calculator-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        select, input[type="text"] {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: calc(100% - 22px);
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 15px;
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .menu {
+            background-color: #333;
+            overflow: hidden;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        .menu ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+        .menu ul li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        .menu ul li a:hover, .menu ul li a.active {
+            background-color: #04AA6D;
+            color: white;
+        }
+    </style>
+    </head>
+    <body>
+        <div class="menu">
+            <ul>
+                <li><a href="intervalo.html">Estimación por Intervalo</a></li>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="puntual.html" class="active">Estimación Puntual</a></li>
+            </ul>
+        </div>
+        <div class="content-container">
+    <div class="calculator-container">
+        <h2>Calculadora de Estimación Puntual</h2>
+        <select id="calculationType">
+            <option value="mean">Media</option>
+            <option value="median">Mediana</option>
+            <option value="mode">Moda</option>
+            <option value="stdDev">Desviación Estándar</option>
+            <option value="variance">Varianza</option>
+        </select>
+        <input type="text" id="dataInput" placeholder="Ingresa los datos separados por comas">
+        <button onclick="calculate()">Calcular</button>
+        <div id="result"></div>
+    </div>
+    <script>
+        function calculate() {
+            const type = document.getElementById('calculationType').value;
+            const data = document.getElementById('dataInput').value.split(',').map(Number).filter(n => !isNaN(n));
+            let result;
+            switch (type) {
+                case 'mean':
+                    result = calculateMean(data);
+                    break;
+                case 'median':
+                    result = calculateMedian(data);
+                    break;
+                case 'mode':
+                    result = calculateMode(data);
+                    break;
+                case 'stdDev':
+                    result = calculateStdDev(data);
+                    break;
+                case 'variance':
+                    result = calculateVariance(data);
+                    break;
+            }
+            document.getElementById('result').innerText = `Resultado: ${result}`;
+        }
+
+        function calculateMean(data) {
+            const sum = data.reduce((acc, val) => acc + val, 0);
+            return sum / data.length;
+        }
+
+        function calculateMedian(data) {
+            data.sort((a, b) => a - b);
+            const midIndex = Math.floor(data.length / 2);
+            return data.length % 2 !== 0 ? data[midIndex] : (data[midIndex - 1] + data[midIndex]) / 2;
+        }
+
+        function calculateMode(data) {
+            const modeObj = {};
+            data.forEach(num => {
+                if (!modeObj[num]) modeObj[num] = 0;
+                modeObj[num]++;
+            });
+
+            let maxFrequency = 0;
+            let modes = [];
+            for (const num in modeObj) {
+                if (modeObj[num] > maxFrequency) {
+                    modes = [num];
+                    maxFrequency = modeObj[num];
+                } else if (modeObj[num] === maxFrequency) {
+                    modes.push(num);
+                }
+            }
+
+            return modes.length === data.length ? 'No hay moda' : modes.join(', ');
+        }
+
+        function calculateStdDev(data) {
+            const mean = calculateMean(data);
+            const squareDiffs = data.map(num => Math.pow(num - mean, 2));
+            const avgSquareDiff = calculateMean(squareDiffs);
+            return Math.sqrt(avgSquareDiff);
+        }
+
+        function calculateVariance(data) {
+            const mean = calculateMean(data);
+            const squareDiffs = data.map(num => Math.pow(num - mean, 2));
+            return calculateMean(squareDiffs);
+        }
+    </script>
+
+    <div class="info">
+    <p>
+           <b>Media:</b> Suma todos los números y divide el resultado por la cantidad de números. <br>
+
+           <b>Mediana:</b> Ordena los números y encuentra el valor medio. Si hay un número par de datos, calcula el promedio de los dos valores medios. <br>
+
+           <b>Moda:</b> Encuentra el número o números que más se repiten. Si todos los números son únicos, indica que no hay moda. <br>
+
+           <b>Desviación Estándar:</b> Calcula la raíz cuadrada de la varianza. <br>
+
+           <b>Varianza:</b> Calcula el promedio de las diferencias al cuadrado entre cada número y la media. <br>
+           <b>Datos:</b> Muestra otorgada a los investigadores (75, 68, 73, 71, 76, 80, 74, 69, 77, 72, 70, 67, 79, 83, 75, 66..., 81, 74, 72).
+    </p>
+</div>
+</div>
+</body>
+</html>
